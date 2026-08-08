@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Sign up as a facility — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container" style="padding:32px 16px;max-width:480px;">
+  <h1>Post your first shift</h1>
+  <div class="card">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn--primary btn--block" type="submit">Create account</button>
+    </form>
+  </div>
+  <p>Looking for shifts instead? <a href="{% url 'accounts_app:signup_worker' %}">Sign up as a worker →</a></p>
+</div>
+{% endblock %}

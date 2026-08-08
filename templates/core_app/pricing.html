@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Pricing — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container" style="padding:32px 16px;">
+  <h1>Pricing</h1>
+  <p>Browsing and claiming shifts is always free for workers.</p>
+  <div class="card">
+    <h2>For facilities</h2>
+    <p class="shift-card__pay">$25 <span style="font-size:1rem;color:var(--steel);">per filled shift</span></p>
+    <p>No subscription, no setup fee — pay only when a shift is successfully filled.</p>
+    <a class="btn btn--primary" href="{% url 'accounts_app:signup_facility' %}">Get started</a>
+  </div>
+</div>
+{% endblock %}

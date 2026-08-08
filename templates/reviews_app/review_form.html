@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Leave a review — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container" style="padding:32px 16px;max-width:480px;">
+  <h1>How did it go?</h1>
+  <p>{{ application.shift }}</p>
+  <div class="card">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn--primary btn--block" type="submit">Submit review</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

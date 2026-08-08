@@ -1,0 +1,8 @@
+Your shift is confirmed!
+
+{{ application.shift.get_role_type_display }}
+{{ application.shift.location.facility.name }} — {{ application.shift.location.address }}
+{{ application.shift.start_datetime }} – {{ application.shift.end_datetime }}
+Pay: ${{ application.shift.pay_rate }}/hr
+
+See you there — ShiftFloor

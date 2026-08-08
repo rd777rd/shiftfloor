@@ -1,0 +1,7 @@
+Reminder: your shift starts in about 2 hours.
+
+{{ application.shift.get_role_type_display }}
+{{ application.shift.location.facility.name }} — {{ application.shift.location.address }}
+Starts: {{ application.shift.start_datetime }}
+
+— ShiftFloor

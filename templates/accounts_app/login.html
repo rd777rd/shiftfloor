@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Log in — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container" style="padding:32px 16px;max-width:400px;">
+  <h1>Log in</h1>
+  <div class="card">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn--primary btn--block" type="submit">Log in</button>
+    </form>
+  </div>
+  <p><a href="{% url 'accounts_app:password_reset' %}">Forgot your password?</a></p>
+</div>
+{% endblock %}

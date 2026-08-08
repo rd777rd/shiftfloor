@@ -1,0 +1,17 @@
+{% extends "base_worker.html" %}
+{% block title %}Payouts — {{ SITE_NAME }}{% endblock %}
+{% block worker_content %}
+<h1>Payouts</h1>
+{% if not payout_profile.payouts_enabled %}
+  <div class="card">
+    <p>Set up payouts to get paid for completed shifts.</p>
+    <a class="btn btn--primary" href="{% url 'payments_app:connect_onboarding' %}">Set up payouts</a>
+  </div>
+{% endif %}
+<h2>Payout history</h2>
+{% for payout in payouts %}
+  <div class="card"><strong>${{ payout.amount }}</strong><div class="shift-card__meta">{{ payout.created_at }}</div></div>
+{% empty %}
+  <div class="empty-state"><p>No payouts yet.</p></div>
+{% endfor %}
+{% endblock %}

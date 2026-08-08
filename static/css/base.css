@@ -1,0 +1,228 @@
+/* ==========================================================================
+   ShiftFloor design system — hand-written CSS, mobile-first (min-width
+   media queries only), per Design Plan §5/§8 and Rubric A.1/A.9.
+   ========================================================================== */
+
+:root {
+  --graphite: #1e2328;
+  --steel: #4a5560;
+  --cool-white: #f7f8f9;
+  --accent: #ff6b1a;
+  --accent-contrast: #ffffff;
+  --success: #2e9e5b;
+  --warning: #e8a93b;
+  --error: #d64545;
+
+  --font-heading: "Arial Narrow", "Helvetica Neue Condensed", sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --radius: 6px;
+  --shadow-card: 0 1px 3px rgba(30, 35, 40, 0.12);
+}
+
+/* Self-hosted @font-face declarations were removed here (Rubric E.1).
+   They pointed at static/fonts/BarlowCondensed-Bold.woff2 and
+   Inter-Regular.woff2, which were never actually committed — only a
+   README describing how to obtain them — so every page load was firing
+   two guaranteed-404 font requests in production. Rather than ship that
+   silently, --font-heading / --font-body below now name the system stack
+   directly as the real, intentional design, instead of a "fallback" for
+   files that don't exist. See static/fonts/README.md for how to restore
+   true Barlow Condensed / Inter if the .woff2 files are added later. */
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--graphite);
+  background: var(--cool-white);
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+  margin: 0 0 0.5em;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.6rem; }
+h3 { font-size: 1.25rem; }
+
+a { color: var(--graphite); }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.container {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* --- Nav --- */
+.nav {
+  background: var(--graphite);
+  color: var(--cool-white);
+}
+.nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+}
+.nav__logo {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--cool-white);
+  text-decoration: none;
+}
+.nav__links { display: none; gap: 20px; list-style: none; margin: 0; padding: 0; }
+.nav__links a { color: var(--cool-white); text-decoration: none; font-size: 0.95rem; }
+
+/* --- Buttons --- */
+.btn {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 12px 22px;
+  border-radius: var(--radius);
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+}
+.btn--primary { background: var(--accent); color: var(--accent-contrast); }
+.btn--primary:hover { background: #e35f14; }
+.btn--secondary { background: transparent; color: var(--graphite); border-color: var(--steel); }
+.btn--danger { background: var(--error); color: #fff; }
+.btn--block { display: block; width: 100%; }
+
+/* --- Cards --- */
+.card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.shift-card { display: flex; flex-direction: column; gap: 8px; }
+.shift-card__top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.shift-card__pay { font-family: var(--font-heading); font-size: 1.4rem; color: var(--graphite); }
+.shift-card__meta { color: var(--steel); font-size: 0.9rem; }
+
+/* --- Status pills --- */
+.pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.pill--pending { background: #fdf1dd; color: #8a5a12; }
+.pill--verified { background: #e2f5e9; color: var(--success); }
+.pill--rejected { background: #fbe6e6; color: var(--error); }
+.pill--confirmed { background: #e2f5e9; color: var(--success); }
+
+/* --- Cert badge --- */
+.cert-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--steel);
+}
+.cert-badge--verified {
+  border-color: var(--success);
+  color: var(--success);
+  /* The "Verified" badge is the one non-CTA place the brand accent is
+     allowed to appear (Design Plan §5 / Rubric A.4) — a subtle glow, not
+     a fill swap, so green still reads as the fast at-a-glance "good"
+     signal while orange still ties back to the one meaningful accent. */
+  box-shadow: 0 0 0 2px rgba(255, 107, 26, 0.18);
+}
+.cert-badge--pending { border-color: var(--warning); color: #8a5a12; }
+.cert-badge--rejected { border-color: var(--error); color: var(--error); }
+
+/* --- KPI strip --- */
+.kpi-strip { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 24px; }
+.kpi-stat { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow-card); padding: 16px; text-align: center; }
+.kpi-stat__value { font-family: var(--font-heading); font-size: 2rem; color: var(--accent); }
+.kpi-stat__label { color: var(--steel); font-size: 0.85rem; }
+
+/* --- Forms --- */
+/* Django's form.as_p wraps each field in a <p> with its own browser
+   default margin; zeroing it out avoids doubling up on top of the
+   label/input margins already set below (Rubric E.2). */
+form p { margin: 0; }
+label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.9rem; }
+input, select, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #c7ccd1;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  margin-bottom: 14px;
+}
+
+/* --- Stepper (progressive disclosure) --- */
+.stepper__step { display: none; }
+.stepper__step.is-active { display: block; }
+.stepper__progress { display: flex; gap: 6px; margin-bottom: 18px; }
+.stepper__progress span { flex: 1; height: 4px; background: #dfe3e6; border-radius: 4px; }
+.stepper__progress span.is-complete { background: var(--accent); }
+.stepper__nav { display: flex; justify-content: space-between; margin-top: 16px; }
+
+/* --- Hero (home) --- */
+.hero { background: var(--graphite); color: var(--cool-white); padding: 48px 0; }
+.hero__split { display: grid; grid-template-columns: 1fr; gap: 20px; }
+.hero__panel { background: rgba(255,255,255,0.06); border-radius: var(--radius); padding: 24px; }
+.hero__panel h2 { color: var(--cool-white); }
+
+/* --- Footer --- */
+.footer { background: var(--graphite); color: #b7bec4; padding: 32px 0; font-size: 0.85rem; }
+.footer a { color: #b7bec4; }
+
+/* --- Worker bottom nav (mobile) --- */
+.worker-bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  display: flex; justify-content: space-around;
+  background: #fff; border-top: 1px solid #e2e5e8;
+  padding: 8px 0;
+}
+.worker-bottom-nav a { text-decoration: none; color: var(--steel); font-size: 0.75rem; text-align: center; }
+.worker-bottom-nav a.is-active { color: var(--accent); }
+
+.empty-state { text-align: center; padding: 40px 16px; color: var(--steel); }
+
+/* ==========================================================================
+   Breakpoints — mobile-first, min-width only (Rubric A.1)
+   ========================================================================== */
+@media (min-width: 480px) {
+  .kpi-strip { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (min-width: 768px) {
+  .nav__links { display: flex; }
+  .hero__split { grid-template-columns: 1fr 1fr; }
+}
+
+@media (min-width: 1024px) {
+  h1 { font-size: 2.6rem; }
+  .container { padding: 0 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

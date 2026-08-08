@@ -1,0 +1,48 @@
+{% extends "base_worker.html" %}
+{% block title %}Your dashboard — {{ SITE_NAME }}{% endblock %}
+{% block worker_content %}
+<h1>Shifts for you</h1>
+
+{% if upcoming_applications %}
+<h2>Upcoming</h2>
+{% for application in upcoming_applications %}
+  <div class="card shift-card">
+    <div class="shift-card__top">
+      <div>
+        <strong>{{ application.shift.get_role_type_display }}</strong>
+        <div class="shift-card__meta">{{ application.shift.location.facility.name }} — {{ application.shift.start_datetime }}</div>
+      </div>
+      <span class="pill pill--confirmed">Confirmed</span>
+    </div>
+  </div>
+{% endfor %}
+{% endif %}
+
+<h2>Recommended for you</h2>
+{% if recommended_shifts %}
+  {% for shift in recommended_shifts %}
+    <a href="{{ shift.get_absolute_url }}" style="text-decoration:none;color:inherit;">
+      <div class="card shift-card">
+        <div class="shift-card__top">
+          <div>
+            <strong>{{ shift.get_role_type_display }}</strong>
+            <div class="shift-card__meta">{{ shift.location.facility.name }} — {{ shift.location.label }}</div>
+          </div>
+          <div class="shift-card__pay">${{ shift.pay_rate }}/hr</div>
+        </div>
+        <div class="shift-card__meta">{{ shift.start_datetime }} · {{ shift.spots_remaining }} spot{{ shift.spots_remaining|pluralize }} left</div>
+        {% if shift.required_cert in profile.verified_cert_types or shift.required_cert == "GENERAL" %}
+          <span class="cert-badge cert-badge--verified">✓ You qualify</span>
+        {% else %}
+          <span class="cert-badge cert-badge--pending">Requires {{ shift.get_required_cert_display }}</span>
+        {% endif %}
+      </div>
+    </a>
+  {% endfor %}
+{% else %}
+  <div class="empty-state">
+    <p>No shifts match your certifications yet.</p>
+    <a class="btn btn--secondary" href="{% url 'shifts_app:shift_browse' %}">Browse all open shifts</a>
+  </div>
+{% endif %}
+{% endblock %}

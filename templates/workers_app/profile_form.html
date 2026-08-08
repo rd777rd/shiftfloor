@@ -1,0 +1,12 @@
+{% extends "base_worker.html" %}
+{% block title %}Edit profile — {{ SITE_NAME }}{% endblock %}
+{% block worker_content %}
+<h1>Edit your profile</h1>
+<div class="card">
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn--primary btn--block" type="submit">Save</button>
+  </form>
+</div>
+{% endblock %}

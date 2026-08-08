@@ -1,0 +1,18 @@
+{% extends "base_worker.html" %}
+{% block title %}Your offers — {{ SITE_NAME }}{% endblock %}
+{% block worker_content %}
+<h1>Pending offers</h1>
+{% for offer in offers %}
+  <div class="card">
+    <strong>{{ offer.shift.get_role_type_display }}</strong>
+    <div class="shift-card__meta">{{ offer.shift.location.facility.name }} — {{ offer.shift.start_datetime }}</div>
+    <form method="post" action="{% url 'matching_app:respond_offer' offer.id %}" style="display:inline;">
+      {% csrf_token %}
+      <button class="btn btn--primary" type="submit" name="decision" value="accept">Accept</button>
+      <button class="btn btn--secondary" type="submit" name="decision" value="decline">Decline</button>
+    </form>
+  </div>
+{% empty %}
+  <div class="empty-state"><p>No pending offers right now.</p></div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Applicants — {{ SITE_NAME }}{% endblock %}
+{% block dashboard_content %}
+<h1>Applicants — {{ shift }}</h1>
+<p>{{ shift.spots_remaining }} of {{ shift.headcount_needed }} spots open</p>
+{% for application in applications %}
+  <div class="card">
+    <strong>{{ application.worker.user.get_full_name|default:application.worker.user.username }}</strong>
+    <span class="pill pill--{{ application.status|lower }}">{{ application.get_status_display }}</span>
+    <p>★ {{ application.worker.avg_rating }} · {{ application.worker.completed_shifts_count }} shifts completed</p>
+    {% if application.status == "APPLIED" %}
+      <form method="post" action="{% url 'matching_app:offer_applicant' application.id %}">
+        {% csrf_token %}
+        <button class="btn btn--primary" type="submit">Offer this shift</button>
+      </form>
+    {% endif %}
+  </div>
+{% empty %}
+  <div class="empty-state"><p>No applicants yet.</p></div>
+{% endfor %}
+{% endblock %}

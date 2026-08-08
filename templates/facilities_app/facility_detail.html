@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load seo_tags %}
+{% block title %}{{ facility.name }} — {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ facility.name }} is hiring on ShiftFloor — browse open warehouse and distribution shifts.{% endblock %}
+{% block content %}
+<div class="container" style="padding:32px 16px;">
+  <h1>{{ facility.name }}</h1>
+  <p>★ {{ facility.avg_rating }}</p>
+  <p>{{ facility.description }}</p>
+  <h2>Open shifts</h2>
+  {% for shift in open_shifts %}
+    <a href="{{ shift.get_absolute_url }}"><div class="card shift-card">
+      <strong>{{ shift.get_role_type_display }}</strong> — ${{ shift.pay_rate }}/hr — {{ shift.start_datetime }}
+    </div></a>
+  {% empty %}
+    <p>No open shifts right now.</p>
+  {% endfor %}
+</div>
+{% url 'facilities_app:facility_detail' facility.slug as facility_url %}
+{% breadcrumb_jsonld "Home:/" facility.name|add:":"|add:facility_url %}
+{% endblock %}

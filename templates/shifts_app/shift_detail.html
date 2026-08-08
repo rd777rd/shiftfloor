@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load seo_tags jobposting_tags %}
+{% block title %}{{ shift.get_role_type_display }} — {{ shift.location.label }} — ${{ shift.pay_rate }}/hr | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ shift.get_role_type_display }} shift at {{ shift.location.facility.name }} in {{ shift.location.label }}, paying ${{ shift.pay_rate }}/hr, starting {{ shift.start_datetime }}.{% endblock %}
+{% block content %}
+<div class="container" style="padding:24px 16px;max-width:640px;">
+  <h1>{{ shift.get_role_type_display }}</h1>
+  <p class="shift-card__meta">{{ shift.location.facility.name }} — {{ shift.location.label }} — {{ shift.location.address }}</p>
+  <div class="shift-card__pay">${{ shift.pay_rate }}/hr</div>
+  <p>{{ shift.start_datetime }} – {{ shift.end_datetime }}</p>
+  <p>{{ shift.spots_remaining }} of {{ shift.headcount_needed }} spots open</p>
+
+  {% if shift.required_cert != "GENERAL" %}
+    <p>Requires: <strong>{{ shift.get_required_cert_display }}</strong></p>
+  {% endif %}
+
+  {% if request.user.is_authenticated and request.user.is_worker %}
+    {% if already_applied %}
+      <p class="pill pill--pending">You've already applied to this shift.</p>
+    {% elif qualifies %}
+      <form method="post" action="{% url 'matching_app:claim_shift' shift.slug %}">
+        {% csrf_token %}
+        <button class="btn btn--primary btn--block" type="submit">Claim this shift</button>
+      </form>
+    {% else %}
+      <p class="pill pill--rejected">You need a verified {{ shift.get_required_cert_display }} to claim this shift.</p>
+      <a class="btn btn--secondary" href="{% url 'workers_app:certification_upload' %}">Upload certification</a>
+    {% endif %}
+  {% elif not request.user.is_authenticated %}
+    <a class="btn btn--primary btn--block" href="{% url 'accounts_app:signup_worker' %}">Sign up to claim this shift</a>
+  {% endif %}
+</div>
+
+{% jobposting_jsonld shift %}
+{% breadcrumb_jsonld "Home:/" "Browse shifts:/shifts/browse/" shift.get_role_type_display|add:":"|add:shift.get_absolute_url %}
+{% endblock %}

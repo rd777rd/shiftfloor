@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ SITE_NAME }} — {{ SITE_TAGLINE }}{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}ShiftFloor connects Indianapolis warehouse and distribution facilities with pre-vetted, certified workers for short-notice shift coverage.{% endblock %}">
+
+  <meta property="og:title" content="{% block og_title %}{{ SITE_NAME }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{{ SITE_TAGLINE }}{% endblock %}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://{{ SITE_DOMAIN }}{{ request.path }}">
+  <meta property="og:image" content="{% block og_image %}https://{{ SITE_DOMAIN }}{% static 'img/og-default.png' %}{% endblock %}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="{% block twitter_image %}https://{{ SITE_DOMAIN }}{% static 'img/og-default.png' %}{% endblock %}">
+  <link rel="canonical" href="https://{{ SITE_DOMAIN }}{{ request.path }}">
+
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  {% include "partials/_nav.html" %}
+
+  <main>
+    {% if messages %}
+      <div class="container" style="margin-top:16px;">
+        {% for message in messages %}
+          <div class="pill pill--{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "partials/_footer.html" %}
+  {% load seo_tags %}
+  {% organization_jsonld %}
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

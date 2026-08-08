@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block body_class %}role-facility{% endblock %}
+{% block content %}
+<div class="container" style="padding-top:24px;padding-bottom:24px;">
+  <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px;">
+    <a href="{% url 'facilities_app:dashboard' %}">Dashboard</a>
+    <a href="{% url 'shifts_app:shift_post' %}">Post a shift</a>
+    <a href="{% url 'facilities_app:location_list' %}">Locations</a>
+    <a href="{% url 'facilities_app:profile_edit' %}">Facility profile</a>
+    <a href="{% url 'payments_app:facility_billing' %}">Billing</a>
+  </div>
+  {% block dashboard_content %}{% endblock %}
+</div>
+{% endblock %}

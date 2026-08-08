@@ -1,0 +1,12 @@
+{% extends "base_worker.html" %}
+{% block title %}Upload certification — {{ SITE_NAME }}{% endblock %}
+{% block worker_content %}
+<h1>Upload a certification</h1>
+<div class="card">
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn--primary btn--block" type="submit">Submit for review</button>
+  </form>
+</div>
+{% endblock %}

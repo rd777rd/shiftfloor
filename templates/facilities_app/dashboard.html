@@ -1,0 +1,34 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Dashboard — {{ SITE_NAME }}{% endblock %}
+{% block dashboard_content %}
+<h1>{{ facility.name }}</h1>
+
+<div class="kpi-strip">
+  <div class="kpi-stat"><div class="kpi-stat__value">{{ open_shift_count }}</div><div class="kpi-stat__label">Open shifts</div></div>
+  <div class="kpi-stat"><div class="kpi-stat__value">{{ fill_rate }}%</div><div class="kpi-stat__label">Fill rate</div></div>
+  <div class="kpi-stat"><div class="kpi-stat__value">{{ upcoming_shifts|length }}</div><div class="kpi-stat__label">Upcoming shifts</div></div>
+</div>
+
+<a class="btn btn--primary" href="{% url 'shifts_app:shift_post' %}">Post a shift</a>
+
+<h2 style="margin-top:24px;">Upcoming shifts</h2>
+{% for shift in upcoming_shifts %}
+  <div class="card shift-card">
+    <div class="shift-card__top">
+      <div>
+        <strong>{{ shift.get_role_type_display }}</strong>
+        <div class="shift-card__meta">{{ shift.location.label }} — {{ shift.start_datetime }}</div>
+      </div>
+      <span class="pill pill--{{ shift.status|lower }}">{{ shift.get_status_display }}</span>
+    </div>
+    <div class="shift-card__meta">{{ shift.headcount_filled }}/{{ shift.headcount_needed }} filled</div>
+    <div>
+      <a href="{% url 'matching_app:applicant_queue' shift.id %}">View applicants</a> ·
+      <a href="{% url 'shifts_app:shift_edit' shift.slug %}">Edit</a> ·
+      <a href="{% url 'matching_app:close_out_shift' shift.id %}">Close out</a>
+    </div>
+  </div>
+{% empty %}
+  <div class="empty-state"><p>No shifts yet. Post your first one to get started.</p></div>
+{% endfor %}
+{% endblock %}

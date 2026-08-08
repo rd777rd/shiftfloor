@@ -1,0 +1,36 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+{% block title %}{% if editing %}Edit shift{% else %}Post a shift{% endif %} — {{ SITE_NAME }}{% endblock %}
+{% block dashboard_content %}
+<h1>{% if editing %}Edit shift{% else %}Post a shift{% endif %}</h1>
+
+<form method="post" data-stepper novalidate>
+  {% csrf_token %}
+  <div class="stepper__progress"><span></span><span></span><span></span></div>
+
+  <div class="stepper__step is-active">
+    <h2>1. Role &amp; location</h2>
+    {{ form.location.label_tag }} {{ form.location }}
+    {{ form.role_type.label_tag }} {{ form.role_type }}
+    {{ form.required_cert.label_tag }} {{ form.required_cert }}
+    <div class="stepper__nav"><span></span><button type="button" data-step-next class="btn btn--primary">Next</button></div>
+  </div>
+
+  <div class="stepper__step">
+    <h2>2. Schedule &amp; pay</h2>
+    {{ form.start_datetime.label_tag }} {{ form.start_datetime }}
+    {{ form.end_datetime.label_tag }} {{ form.end_datetime }}
+    {{ form.pay_rate.label_tag }} {{ form.pay_rate }}
+    {{ form.headcount_needed.label_tag }} {{ form.headcount_needed }}
+    <div class="stepper__nav"><button type="button" data-step-back class="btn btn--secondary">Back</button><button type="button" data-step-next class="btn btn--primary">Next</button></div>
+  </div>
+
+  <div class="stepper__step">
+    <h2>3. Review &amp; publish</h2>
+    <label>{{ form.auto_accept }} Auto-confirm applicants instantly</label>
+    {% if form.non_field_errors %}<p class="pill pill--rejected">{{ form.non_field_errors }}</p>{% endif %}
+    <div class="stepper__nav"><button type="button" data-step-back class="btn btn--secondary">Back</button><button class="btn btn--primary" type="submit">Publish shift</button></div>
+  </div>
+</form>
+{% endblock %}
+{% block extra_scripts %}<script src="{% static 'js/stepper.js' %}"></script>{% endblock %}

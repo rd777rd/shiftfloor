@@ -1,0 +1,9 @@
+{% extends "base_dashboard.html" %}
+{% block dashboard_content %}
+<h1>Cancel this shift?</h1>
+<p>{{ shift }} — this can't be undone, and any confirmed workers will be notified.</p>
+<form method="post">
+  {% csrf_token %}
+  <button class="btn btn--danger" type="submit">Cancel shift</button>
+</form>
+{% endblock %}

@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /accounts/profile/
+Disallow: /accounts/password/
+Disallow: /facilities/dashboard/
+Disallow: /workers/dashboard/
+Disallow: /matching/
+Disallow: /payments/
+Disallow: /shifts/post/
+Disallow: /shifts/*/edit/
+Disallow: /shifts/*/cancel/
+Disallow: /admin/
+
+Sitemap: https://{{ request.get_host }}/sitemap.xml

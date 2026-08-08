@@ -1,0 +1,16 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Billing — {{ SITE_NAME }}{% endblock %}
+{% block dashboard_content %}
+<h1>Billing</h1>
+<p>Flat fee: ${{ fee }} per filled shift. Charged automatically once a shift is confirmed filled.</p>
+<h2>Invoice history</h2>
+{% for invoice in invoices %}
+  <div class="card">
+    <strong>${{ invoice.amount }}</strong>
+    <span class="pill pill--{% if invoice.paid %}verified{% else %}pending{% endif %}">{% if invoice.paid %}Paid{% else %}Pending{% endif %}</span>
+    <div class="shift-card__meta">{{ invoice.created_at }}</div>
+  </div>
+{% empty %}
+  <div class="empty-state"><p>No invoices yet.</p></div>
+{% endfor %}
+{% endblock %}

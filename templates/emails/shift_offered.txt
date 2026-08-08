@@ -1,0 +1,7 @@
+You've been offered a shift.
+
+{{ application.shift.get_role_type_display }}
+{{ application.shift.location.facility.name }}
+{{ application.shift.start_datetime }}
+
+Log in to ShiftFloor to accept or decline this offer.

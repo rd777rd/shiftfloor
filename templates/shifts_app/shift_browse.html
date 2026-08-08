@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Browse open warehouse shifts — {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}Browse open forklift, picker/packer, and general labor shifts across the Indianapolis industrial corridor.{% endblock %}
+{% block content %}
+<div class="container" style="padding:24px 16px;">
+  <h1>Open shifts</h1>
+  <form method="get" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:20px;">
+    <div>{{ filter_form.cert_type.label_tag }} {{ filter_form.cert_type }}</div>
+    <div>{{ filter_form.min_pay.label_tag }} {{ filter_form.min_pay }}</div>
+    <div>{{ filter_form.max_distance.label_tag }} {{ filter_form.max_distance }}</div>
+    <button class="btn btn--secondary" type="submit">Filter</button>
+  </form>
+
+  {% for shift in shifts %}
+    <a href="{{ shift.get_absolute_url }}" style="text-decoration:none;color:inherit;">
+      <div class="card shift-card">
+        <div class="shift-card__top">
+          <div>
+            <strong>{{ shift.get_role_type_display }}</strong>
+            <div class="shift-card__meta">{{ shift.location.facility.name }} — {{ shift.location.label }}</div>
+          </div>
+          <div class="shift-card__pay">${{ shift.pay_rate }}/hr</div>
+        </div>
+        <div class="shift-card__meta">{{ shift.start_datetime }} · {{ shift.spots_remaining }} spot{{ shift.spots_remaining|pluralize }} left</div>
+        {% if profile %}
+          {% if shift.required_cert in profile.verified_cert_types or shift.required_cert == "GENERAL" %}
+            <span class="cert-badge cert-badge--verified">✓ You qualify</span>
+          {% else %}
+            <span class="cert-badge cert-badge--pending">Requires {{ shift.get_required_cert_display }}</span>
+          {% endif %}
+        {% else %}
+          <span class="cert-badge">Requires {{ shift.get_required_cert_display }}</span>
+        {% endif %}
+      </div>
+    </a>
+  {% empty %}
+    <div class="empty-state"><p>No open shifts match your filters right now.</p></div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+name: Scheduled Tasks
+
+# Free replacement for Render Cron Jobs (Render's cron jobs now bill a
+# minimum of $1/month each — see shiftfloor_project_plan.md Deployment
+# Plan §6 for the full reasoning). This runs the exact same two Django
+# management commands Render's cron would have run, just triggered by
+# GitHub Actions instead, at $0 cost on a public repo (or within GitHub's
+# free private-repo minutes).
+#
+# Required repo secrets (Settings → Secrets and variables → Actions):
+#   DATABASE_URL            — Render Postgres's EXTERNAL connection string
+#                              (not the internal one — GitHub's runners
+#                              are outside Render's private network)
+#   SECRET_KEY               — same value as the Render web service
+#   ANYMAIL_BREVO_API_KEY     — needed for send-shift-reminders to send email
+#   DEFAULT_FROM_EMAIL        — same value as the Render web service
+
+on:
+  schedule:
+    - cron: "0 * * * *"     # hourly — matches expire_shifts's old Render schedule
+    - cron: "*/15 * * * *"  # every 15 min — matches send_shift_reminders's old schedule
+  workflow_dispatch: {}      # lets you trigger a manual test run from the Actions tab
+
+jobs:
+  expire-shifts:
+    # GitHub Actions runs the whole workflow on every schedule match, so
+    # github.event.schedule tells us *which* cron fired and lets each job
+    # only run on its own schedule. workflow_dispatch has no schedule
+    # value, so both jobs also run together on a manual trigger for testing.
+    if: github.event.schedule == '0 * * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: shiftfloor_project.settings.production
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+      - run: pip install -r requirements.txt
+      - run: python manage.py expire_shifts
+
+  send-shift-reminders:
+    if: github.event.schedule == '*/15 * * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: shiftfloor_project.settings.production
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      ANYMAIL_BREVO_API_KEY: ${{ secrets.ANYMAIL_BREVO_API_KEY }}
+      DEFAULT_FROM_EMAIL: ${{ secrets.DEFAULT_FROM_EMAIL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+      - run: pip install -r requirements.txt
+      - run: python manage.py send_shift_reminders

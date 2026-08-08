@@ -1,0 +1,18 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Close out shift — {{ SITE_NAME }}{% endblock %}
+{% block dashboard_content %}
+<h1>Close out — {{ shift }}</h1>
+{% for application in confirmed %}
+  <div class="card">
+    <strong>{{ application.worker.user.get_full_name|default:application.worker.user.username }}</strong>
+    <form method="post" style="display:inline;">
+      {% csrf_token %}
+      <input type="hidden" name="application_id" value="{{ application.id }}">
+      <button class="btn btn--primary" type="submit" name="outcome" value="completed">Completed</button>
+      <button class="btn btn--danger" type="submit" name="outcome" value="no_show">No-show</button>
+    </form>
+  </div>
+{% empty %}
+  <div class="empty-state"><p>No confirmed workers to close out.</p></div>
+{% endfor %}
+{% endblock %}

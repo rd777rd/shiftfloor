@@ -1,0 +1,20 @@
+{% extends "base_worker.html" %}
+{% block title %}Your certifications — {{ SITE_NAME }}{% endblock %}
+{% block worker_content %}
+<h1>Your certifications</h1>
+<a class="btn btn--primary" href="{% url 'workers_app:certification_upload' %}">Upload a certification</a>
+{% for cert in certifications %}
+  <div class="card">
+    <strong>{{ cert.get_cert_type_display }}</strong>
+    {% if cert.status == "VERIFIED" %}
+      <span class="pill pill--verified">Verified</span>
+    {% elif cert.status == "REJECTED" %}
+      <span class="pill pill--rejected">Rejected — {{ cert.rejection_reason }}</span>
+    {% else %}
+      <span class="pill pill--pending">Pending review</span>
+    {% endif %}
+  </div>
+{% empty %}
+  <div class="empty-state"><p>No certifications uploaded yet.</p></div>
+{% endfor %}
+{% endblock %}

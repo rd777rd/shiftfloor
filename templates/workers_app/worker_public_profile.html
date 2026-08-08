@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ profile.user.get_full_name }} — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container" style="padding:32px 16px;">
+  <h1>{{ profile.user.get_full_name|default:profile.user.username }}</h1>
+  <p>★ {{ profile.avg_rating }} · {{ profile.completed_shifts_count }} shifts completed · {{ profile.no_show_count }} no-shows</p>
+  <h2>Certifications</h2>
+  {% for cert in profile.certifications.all %}
+    {% if cert.status == "VERIFIED" %}
+      <span class="cert-badge cert-badge--verified">✓ {{ cert.get_cert_type_display }}</span>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endblock %}

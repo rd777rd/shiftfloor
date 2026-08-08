@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load seo_tags %}
+{% block title %}FAQ — {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container" style="padding:32px 16px;">
+  <h1>Frequently asked questions</h1>
+  {% for question, answer in faqs %}
+    <div class="card">
+      <h3>{{ question }}</h3>
+      <p>{{ answer }}</p>
+    </div>
+  {% endfor %}
+</div>
+{% faq_jsonld faqs %}
+{% endblock %}

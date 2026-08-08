@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <h1>{{ SITE_TAGLINE }}</h1>
+    <p>{{ open_shift_count }} shift{{ open_shift_count|pluralize }} open right now across the Indianapolis industrial corridor.</p>
+    <div class="hero__split">
+      <div class="hero__panel">
+        <h2>I need workers today</h2>
+        <p>Post a shift in under 3 minutes. It's live to matching, verified workers the moment you publish.</p>
+        <a class="btn btn--primary" href="{% url 'accounts_app:signup_facility' %}">Post a shift</a>
+      </div>
+      <div class="hero__panel">
+        <h2>Find a shift near you</h2>
+        <p>Browse open shifts ranked by your certifications, distance, and pay. Claim one in under a minute.</p>
+        <a class="btn btn--primary" href="{% url 'accounts_app:signup_worker' %}">Find shifts</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container" style="padding:40px 16px;">
+  <h2>How it works</h2>
+  <div style="display:grid;gap:16px;grid-template-columns:1fr;">
+    <div class="card"><h3>1. Post or browse</h3><p>Facilities post structured shift details. Workers browse shifts matched to their certifications.</p></div>
+    <div class="card"><h3>2. Claim or confirm</h3><p>Workers claim a shift with one tap. Facilities confirm applicants from their dashboard.</p></div>
+    <div class="card"><h3>3. Show up, get rated</h3><p>Both sides rate each other after the shift, building trust for future matches.</p></div>
+  </div>
+</section>
+
+<section class="container" style="padding-bottom:40px;">
+  <h2>Certifications we support</h2>
+  <p>Forklift Classes I–VII, OSHA 10, OSHA 30, and general labor shifts requiring no certification. <a href="{% url 'core_app:certifications_info' %}">Learn more →</a></p>
+</section>
+{% endblock %}
