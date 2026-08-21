@@ -45,13 +45,14 @@ integrations, and SEO infrastructure — all on a $0/month hosting budget.
   constraints), ownership checks on payment and profile-access endpoints,
   and structured-data correctness.
 - **Resourceful, honest infrastructure** — the entire deployment runs on
-  free tiers end-to-end, including routing scheduled jobs through GitHub
-  Actions after Render discontinued free cron jobs. Trade-offs of that
-  choice (documented in `SETUP.md`) are written down rather than hidden.
+  free tiers end-to-end: SQLite in production (no paid DB add-on) and
+  scheduled jobs routed through GitHub Actions hitting a pair of
+  authenticated app endpoints, since Render discontinued free cron jobs
+  and a GitHub runner can't reach a SQLite file on Render's disk directly.
 
 ## Tech stack
 
-Django 5.2 · PostgreSQL (prod) / SQLite (local) · hand-written CSS +
+Django 5.2 · SQLite · hand-written CSS +
 vanilla JS (no frontend framework) · Stripe · Cloudinary · Brevo (via
 django-anymail) · pytest-django + factory_boy · Render + GitHub Actions.
 

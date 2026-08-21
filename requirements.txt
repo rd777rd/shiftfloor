@@ -3,10 +3,6 @@
 Django==5.2.8
 django-environ==0.11.2
 
-# Database
-psycopg2-binary==2.9.12
-dj-database-url==2.3.0
-
 # Static & media
 whitenoise==6.7.0
 django-cloudinary-storage==0.3.0

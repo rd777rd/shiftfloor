@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.db import transaction
+from django.db import OperationalError, transaction
 from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts_app.mixins import role_required
@@ -25,30 +25,46 @@ def claim_shift(request, slug):
     if request.method != "POST":
         return redirect("shifts_app:shift_detail", slug=slug)
 
-    with transaction.atomic():
-        shift = Shift.objects.select_for_update().get(slug=slug)
+    try:
+        with transaction.atomic():
+            shift = Shift.objects.select_for_update().get(slug=slug)
 
-        if shift.status != Shift.Status.OPEN or shift.spots_remaining <= 0:
-            messages.error(request, "This shift is no longer available.")
-            return redirect("shifts_app:shift_detail", slug=slug)
+            if shift.status != Shift.Status.OPEN or shift.spots_remaining <= 0:
+                messages.error(request, "This shift is no longer available.")
+                return redirect("shifts_app:shift_detail", slug=slug)
 
-        if not profile.is_qualified_for(shift.required_cert):
-            messages.error(
-                request,
-                "You need a verified certification for this shift before you can claim it.",
+            if not profile.is_qualified_for(shift.required_cert):
+                messages.error(
+                    request,
+                    "You need a verified certification for this shift before you can claim it.",
+                )
+                return redirect("shifts_app:shift_detail", slug=slug)
+
+            if ShiftApplication.objects.filter(shift=shift, worker=profile).exists():
+                messages.info(request, "You've already applied to this shift.")
+                return redirect("shifts_app:shift_detail", slug=slug)
+
+            status = (
+                ShiftApplication.Status.CONFIRMED
+                if shift.auto_accept
+                else ShiftApplication.Status.APPLIED
             )
-            return redirect("shifts_app:shift_detail", slug=slug)
-
-        if ShiftApplication.objects.filter(shift=shift, worker=profile).exists():
-            messages.info(request, "You've already applied to this shift.")
-            return redirect("shifts_app:shift_detail", slug=slug)
-
-        status = (
-            ShiftApplication.Status.CONFIRMED
-            if shift.auto_accept
-            else ShiftApplication.Status.APPLIED
+            application = ShiftApplication.objects.create(
+                shift=shift, worker=profile, status=status
+            )
+    except OperationalError:
+        # SQLite (production DB — see settings/base.py) has no real
+        # row-level locking: select_for_update() is a silent no-op there,
+        # so concurrent claims on the same shift are serialized instead by
+        # SQLite's own file-level write lock. A losing request can hit
+        # "database is locked" here rather than cleanly re-reading the
+        # now-current headcount the way it would after a Postgres row-lock
+        # wait. Treat that race loss the same as "someone else got there
+        # first" instead of surfacing a raw 500 to the worker who lost.
+        messages.error(
+            request, "This shift just filled up — someone else claimed the last spot."
         )
-        application = ShiftApplication.objects.create(shift=shift, worker=profile, status=status)
+        return redirect("shifts_app:shift_detail", slug=slug)
 
     if application.status == ShiftApplication.Status.CONFIRMED:
         messages.success(request, "Shift confirmed! Check your email for directions.")

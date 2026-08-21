@@ -1,0 +1,46 @@
+name: Scheduled Tasks
+
+# Free replacement for Render Cron Jobs (Render's cron jobs now bill a
+# minimum of $1/month each — see README for the full reasoning). This
+# hits two authenticated endpoints on the live app instead of running
+# manage.py directly against a DB, because the app runs on SQLite (a
+# local file on the Render web service) — GitHub's runners can't reach
+# that file directly the way they could reach an external Postgres
+# instance. Each endpoint runs the same management command in-process
+# on the server and is protected by a shared secret (see core_app.views).
+#
+# Required repo secrets (Settings → Secrets and variables → Actions):
+#   INTERNAL_TASK_KEY  — same value as the Render web service's
+#                         INTERNAL_TASK_KEY env var
+
+on:
+  schedule:
+    - cron: "0 * * * *"     # hourly — matches expire_shifts's old Render schedule
+    - cron: "*/15 * * * *"  # every 15 min — matches send_shift_reminders's old schedule
+  workflow_dispatch: {}      # lets you trigger a manual test run from the Actions tab
+
+env:
+  APP_URL: https://shiftfloor.onrender.com
+
+jobs:
+  expire-shifts:
+    # GitHub Actions runs the whole workflow on every schedule match, so
+    # github.event.schedule tells us *which* cron fired and lets each job
+    # only run on its own schedule. workflow_dispatch has no schedule
+    # value, so both jobs also run together on a manual trigger for testing.
+    if: github.event.schedule == '0 * * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call expire-shifts endpoint
+        run: |
+          curl -sf -X POST "$APP_URL/internal/tasks/expire-shifts/" \
+            -H "X-Task-Key: ${{ secrets.INTERNAL_TASK_KEY }}"
+
+  send-shift-reminders:
+    if: github.event.schedule == '*/15 * * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call send-shift-reminders endpoint
+        run: |
+          curl -sf -X POST "$APP_URL/internal/tasks/send-shift-reminders/" \
+            -H "X-Task-Key: ${{ secrets.INTERNAL_TASK_KEY }}"

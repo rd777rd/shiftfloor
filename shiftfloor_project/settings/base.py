@@ -75,6 +75,13 @@ WSGI_APPLICATION = "shiftfloor_project.wsgi.application"
 DATABASES = {
     "default": env.db("DATABASE_URL", default="sqlite:///" + str(BASE_DIR / "db.sqlite3")),
 }
+if DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3":
+    # Raise Python sqlite3's busy-wait from its 5s default so a request
+    # racing another for the same row (see matching_app.views.claim_shift)
+    # waits out a brief write lock instead of failing immediately —
+    # select_for_update() has no real effect on SQLite, so this timeout is
+    # the actual serialization mechanism under concurrent writes.
+    DATABASES["default"].setdefault("OPTIONS", {})["timeout"] = 20
 
 AUTH_USER_MODEL = "accounts_app.User"
 
@@ -137,6 +144,14 @@ STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY", default="")
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY", default="")
 STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET", default="")
 STRIPE_CONNECT_CLIENT_ID = env("STRIPE_CONNECT_CLIENT_ID", default="")
+
+# --- Internal scheduled-task endpoints ---
+# The database is now SQLite (a local file on the Render web service), so
+# GitHub Actions can no longer run manage.py commands directly against a
+# remote DATABASE_URL like it did under Postgres. Instead, scheduled_tasks.yml
+# makes an authenticated HTTP request to the live app (see core_app.views),
+# which runs the management command in-process against the local SQLite file.
+INTERNAL_TASK_KEY = env("INTERNAL_TASK_KEY", default="")
 
 # --- Site meta (used by SEO context processor / JSON-LD partials) ---
 SITE_NAME = "ShiftFloor"
