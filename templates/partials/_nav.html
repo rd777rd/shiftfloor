@@ -9,7 +9,12 @@
       <li><a href="{% url 'core_app:pricing' %}">Pricing</a></li>
       {% if request.user.is_authenticated %}
         <li><a href="{% url 'core_app:role_redirect' %}">Dashboard</a></li>
-        <li><a href="{% url 'accounts_app:logout' %}">Log out</a></li>
+        <li>
+          <form method="post" action="{% url 'accounts_app:logout' %}" class="nav__logout-form">
+            {% csrf_token %}
+            <button type="submit" class="nav__logout-btn">Log out</button>
+          </form>
+        </li>
       {% else %}
         <li><a href="{% url 'accounts_app:login' %}">Log in</a></li>
         <li><a class="btn btn--primary" style="padding:8px 16px;" href="{% url 'accounts_app:signup_worker' %}">Get started</a></li>

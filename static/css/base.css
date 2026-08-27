@@ -83,8 +83,20 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   color: var(--cool-white);
   text-decoration: none;
 }
-.nav__links { display: none; gap: 20px; list-style: none; margin: 0; padding: 0; }
+.nav__links { display: none; gap: 20px; list-style: none; margin: 0; padding: 0; align-items: center; }
 .nav__links a { color: var(--cool-white); text-decoration: none; font-size: 0.95rem; }
+.nav__logout-form { display: inline; margin: 0; padding: 0; }
+.nav__logout-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--cool-white);
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.nav__logout-btn:hover { text-decoration: underline; }
 
 /* --- Buttons --- */
 .btn {
